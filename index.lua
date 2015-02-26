@@ -56,76 +56,92 @@ local previousValues={}
 local currentValues={}
 
 -- Get difference between current and previous value.
-function diffvalues(name)
-  local cur  = currentValues[name]
-  local last = previousValues[name] or cur
-  previousValues[name] = cur
+function diffvalues(source,name)
+  local cur  = currentValues[source][name] or 0
+  local last = previousValues[source][name] or cur or 0
+  previousValues[source][name] = cur
   return  (tonumber(cur) - tonumber(last))
 end
 
 -- Parse line (i.e. line: "connected_clients : <value>").
-function parseEachLine(line)
+function parseEachLine(source,line)
   local t = split(line,' ')
   if (#t >= 2) then
-    currentValues[t[1]]=t[2];
+    currentValues[source][t[1]]=t[2];
   end
 end
 
 -- print results
-function outputs()
+function outputs(source)
 
-  utils.print('VARNISH_CACHE_ACCEPT_FAIL', diffvalues('accept_fail'), _parameters.source)
-  utils.print('VARNISH_CACHE_BACKEND_BUSY', diffvalues('backend_busy'), _parameters.source)
-  utils.print('VARNISH_CACHE_BACKEND_CONN', diffvalues('backend_conn'), _parameters.source)
-  utils.print('VARNISH_CACHE_BACKEND_FAIL', diffvalues('backend_fail'), _parameters.source)
-  utils.print('VARNISH_CACHE_BACKEND_RECYCLE', diffvalues('backend_recycle'), _parameters.source)
-  utils.print('VARNISH_CACHE_BACKEND_REQ', diffvalues('backend_req'), _parameters.source)
-  utils.print('VARNISH_CACHE_BACKEND_RETRY', diffvalues('backend_retry'), _parameters.source)
-  utils.print('VARNISH_CACHE_BACKEND_REUSE', diffvalues('backend_reuse'), _parameters.source)
-  utils.print('VARNISH_CACHE_BACKEND_TOOLATE', diffvalues('backend_toolate'), _parameters.source)
-  utils.print('VARNISH_CACHE_BACKEND_UNHEALTHY', diffvalues('backend_unhealthy'), _parameters.source)
-  utils.print('VARNISH_CACHE_CACHE_HIT', diffvalues('cache_hit'), _parameters.source)
-  utils.print('VARNISH_CACHE_CACHE_HITPASS', diffvalues('cache_hitpass'), _parameters.source)
-  utils.print('VARNISH_CACHE_CACHE_MISS', diffvalues('cache_miss'), _parameters.source)
-  utils.print('VARNISH_CACHE_CLIENT_CONN', diffvalues('client_conn'), _parameters.source)
-  utils.print('VARNISH_CACHE_CLIENT_DROP', diffvalues('client_drop'), _parameters.source)
-  utils.print('VARNISH_CACHE_CLIENT_DROP_LATE', diffvalues('client_drop_late'), _parameters.source)
-  utils.print('VARNISH_CACHE_CLIENT_REQ', diffvalues('client_req'), _parameters.source)
-  utils.print('VARNISH_CACHE_FETCH_1XX', diffvalues('fetch_1xx'), _parameters.source)
-  utils.print('VARNISH_CACHE_FETCH_204', diffvalues('fetch_204'), _parameters.source)
-  utils.print('VARNISH_CACHE_FETCH_304', diffvalues('fetch_304'), _parameters.source)
-  utils.print('VARNISH_CACHE_FETCH_FAILED', diffvalues('fetch_failed'), _parameters.source)
-  utils.print('VARNISH_CACHE_FETCH_HEAD', diffvalues('fetch_head'), _parameters.source)
-  utils.print('VARNISH_CACHE_LOSTHDR', diffvalues('losthdr'), _parameters.source)
-  utils.print('VARNISH_CACHE_S_BODYBYTES', diffvalues('s_bodybytes'), _parameters.source)
-  utils.print('VARNISH_CACHE_S_FETCH', diffvalues('s_fetch'), _parameters.source)
-  utils.print('VARNISH_CACHE_S_HDRBYTES', diffvalues('s_hdrbytes'), _parameters.source)
-  utils.print('VARNISH_CACHE_S_PASS', diffvalues('s_pass'), _parameters.source)
-  utils.print('VARNISH_CACHE_S_PIPE', diffvalues('s_pipe'), _parameters.source)
-  utils.print('VARNISH_CACHE_S_REQ', diffvalues('s_req'), _parameters.source)
-  utils.print('VARNISH_CACHE_S_SESS', diffvalues('s_sess'), _parameters.source)
+  utils.print('VARNISH_CACHE_ACCEPT_FAIL', diffvalues(source, 'accept_fail'), source)
+  utils.print('VARNISH_CACHE_BACKEND_BUSY', diffvalues(source, 'backend_busy'), source)
+  utils.print('VARNISH_CACHE_BACKEND_CONN', diffvalues(source, 'backend_conn'), source)
+  utils.print('VARNISH_CACHE_BACKEND_FAIL', diffvalues(source, 'backend_fail'), source)
+  utils.print('VARNISH_CACHE_BACKEND_RECYCLE', diffvalues(source, 'backend_recycle'), source)
+  utils.print('VARNISH_CACHE_BACKEND_REQ', diffvalues(source, 'backend_req'), source)
+  utils.print('VARNISH_CACHE_BACKEND_RETRY', diffvalues(source, 'backend_retry'), source)
+  utils.print('VARNISH_CACHE_BACKEND_REUSE', diffvalues(source, 'backend_reuse'), source)
+  utils.print('VARNISH_CACHE_BACKEND_TOOLATE', diffvalues(source, 'backend_toolate'), source)
+  utils.print('VARNISH_CACHE_BACKEND_UNHEALTHY', diffvalues(source, 'backend_unhealthy'), source)
+  utils.print('VARNISH_CACHE_CACHE_HIT', diffvalues(source, 'cache_hit'), source)
+  utils.print('VARNISH_CACHE_CACHE_HITPASS', diffvalues(source, 'cache_hitpass'), source)
+  utils.print('VARNISH_CACHE_CACHE_MISS', diffvalues(source, 'cache_miss'), source)
+  utils.print('VARNISH_CACHE_CLIENT_CONN', diffvalues(source, 'client_conn'), source)
+  utils.print('VARNISH_CACHE_CLIENT_DROP', diffvalues(source, 'client_drop'), source)
+  utils.print('VARNISH_CACHE_CLIENT_DROP_LATE', diffvalues(source, 'client_drop_late'), source)
+  utils.print('VARNISH_CACHE_CLIENT_REQ', diffvalues(source, 'client_req'), source)
+  utils.print('VARNISH_CACHE_FETCH_1XX', diffvalues(source, 'fetch_1xx'), source)
+  utils.print('VARNISH_CACHE_FETCH_204', diffvalues(source, 'fetch_204'), source)
+  utils.print('VARNISH_CACHE_FETCH_304', diffvalues(source, 'fetch_304'), source)
+  utils.print('VARNISH_CACHE_FETCH_FAILED', diffvalues(source, 'fetch_failed'), source)
+  utils.print('VARNISH_CACHE_FETCH_HEAD', diffvalues(source, 'fetch_head'), source)
+  utils.print('VARNISH_CACHE_LOSTHDR', diffvalues(source, 'losthdr'), source)
+  utils.print('VARNISH_CACHE_S_BODYBYTES', diffvalues(source, 's_bodybytes'), source)
+  utils.print('VARNISH_CACHE_S_FETCH', diffvalues(source, 's_fetch'), source)
+  utils.print('VARNISH_CACHE_S_HDRBYTES', diffvalues(source, 's_hdrbytes'), source)
+  utils.print('VARNISH_CACHE_S_PASS', diffvalues(source, 's_pass'), source)
+  utils.print('VARNISH_CACHE_S_PIPE', diffvalues(source, 's_pipe'), source)
+  utils.print('VARNISH_CACHE_S_REQ', diffvalues(source, 's_req'), source)
+  utils.print('VARNISH_CACHE_S_SESS', diffvalues(source, 's_sess'), source)
 
 end
 
--- Client initialization
-
 -- Get current values.
-function poll()
---  local Process = require('uv').Process
---  Process:new(command, args, options)
+function poll(source)
 
-  childProcess.execFile("varnishstat", {"-1"} , {},
+  childProcess.execFile("varnishstat", {"-1", "-n"..source} , {},
     function ( err, stdout, stderr )
-      
-      -- call func with each word in a string
-      stdout:gsub("[^\r\n]+", parseEachLine)
+      if (err or #stderr>0) then 
+        --print errors to stderr
+        utils.debug(err or stderr)
+        return
+      end
 
-      outputs()
+      -- call func with each word in a string
+      stdout:gsub("[^\r\n]+", function(line)
+        parseEachLine(source,line)
+      end)
+
+
+      outputs(source)
     end
   )
 
 end
 
 -- Ready, go.
-poll()
-timer.setInterval(_parameters.pollInterval,poll)
+if (#_parameters.items >0 ) then
+  for _,item in ipairs(_parameters.items) do 
+    local source = item.instance_name and item.instance_name or _parameters.source --default hostname
+    currentValues[source]={};
+    previousValues[source]={};
+    timer.setInterval(_parameters.pollInterval,poll,source)
+  end
+else
+  local source = _parameters.source --default hostname
+  currentValues[source]={};
+  previousValues[source]={};
+  timer.setInterval(_parameters.pollInterval,poll,source)
+end
+
