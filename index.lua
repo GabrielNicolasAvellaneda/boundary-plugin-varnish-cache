@@ -1,47 +1,28 @@
 -- [boundary.com] Varnish Cache Lua Plugin
 -- [author] Ivano Picco <ivano.picco@pianobit.com>
 
--- Requires.
+-- Common requires.
 local utils = require('utils')
-local uv_native = require ('uv_native')
-local string = require('string')
-local split = require('split')
 local timer = require('timer')
-local ffi = require ('ffi')
 local fs = require('fs')
 local json = require('json')
 local os = require ('os')
-
-local childProcess = require ('childprocess')
+local tools = require ('tools')
 
 local success, boundary = pcall(require,'boundary')
 if (not success) then
   boundary = nil 
 end
 
-local isWindows = os.type() == 'win32'
-
--- portable gethostname syscall
-ffi.cdef [[
-  int gethostname (char *, int);
-]]
-function gethostname()
-  local buf = ffi.new("uint8_t[?]", 256)
-  if ( not isWindows ) then 
-    ffi.C.gethostname(buf,256)
-  else
-    local clib = ffi.load('ws2_32')
-    clib.gethostname(buf,256)
-  end
-  return ffi.string(buf)
-end
+-- Business requires.
+local childProcess = require ('childprocess')
 
 -- Default parameters.
 local pollInterval = 10000
 local source       = nil
 
 -- Configuration.
-local _parameters = (boundary and boundary.param and boundary.param) or json.parse(fs.readFileSync('param.json')) or {}
+local _parameters = (boundary and boundary.param ) or json.parse(fs.readFileSync('param.json')) or {}
 
 _parameters.pollInterval = 
   (_parameters.pollInterval and tonumber(_parameters.pollInterval)>0  and tonumber(_parameters.pollInterval)) or
@@ -49,7 +30,7 @@ _parameters.pollInterval =
 
 _parameters.source =
   (type(_parameters.source) == 'string' and _parameters.source:gsub('%s+', '') ~= '' and _parameters.source ~= nil and _parameters.source) or
-  gethostname()
+  os.hostname()
 
 -- Back-trail.
 local previousValues={}
@@ -65,7 +46,7 @@ end
 
 -- Parse line (i.e. line: "connected_clients : <value>").
 function parseEachLine(source,line)
-  local t = split(line,' ')
+  local t = tools.split(line,' ')
   if (#t >= 2) then
     currentValues[source][t[1]]=t[2];
   end
