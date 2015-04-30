@@ -1,4 +1,11 @@
 {
+	"items": [
+			{
+			  "instance_name": "vagrant-ubuntu-trusty-32.localdomain",
+		       	  "pollInterval": 2 
+			},
+			{ "instance_name": "vagrant-ubuntu-trusty-32.localdomain" }
+	],
 	"pollInterval" : 1,
 	"instance_name" : "localhost"
 }

@@ -2,15 +2,18 @@ local framework = require('framework')
 local Plugin = framework.Plugin
 local CommandOutputDataSource = framework.CommandOutputDataSource
 local Accumulator = framework.Accumulator
+local PollerCollection = framework.PollerCollection
+local DataSourcePoller = framework.DataSourcePoller
+local Cache = framework.Cache
 local os = require('os')
+local table = require('table')
 local split = framework.string.split
 local isEmpty = framework.string.isEmpty
+local clone = framework.table.clone
 
 local params = framework.params
-params.pollInterval = params.pollInterval and tonumber(params.pollInterval)*1000 or 10000
+params.pollInterval = params.pollInterval and tonumber(params.pollInterval)*1000 or 5000
 params.instance_name = params.instance_name or os.hostname() 
--- TODO: Handle params.items with instance_name each
--- TODO: Create an accumulator for each item
 params.name = 'Boundary Plugin Varnish Cache'
 params.version = '1.2' 
 params.tags = 'varnish'
@@ -19,6 +22,28 @@ local cmd = {
   path = 'varnishstat',
   args = { '-1'} -- -n <instance_name>
 }
+
+local function createDataSource(params, cmd) 
+  if params.item and #params.items > 0 then
+    local pollers = PollerCollection:new() 
+    for _, item in ipairs(params.items) do
+      cmd = clone(cmd)
+      cmd.info = item.instance_name
+      table.insert(cmd.args, '-n ' .. item.instance_name)
+      local poll_interval = tonumber(item.pollInterval or params.pollInterval) * 1000
+      local poller = DataSourcePoller:new(poll_interval, CommandOutputDataSource:new(cmd))
+      pollers:add(poller)
+    end
+    return pollers
+  end
+
+  cmd.info = params.instance_name
+  return CommandOutputDataSource:new(cmd)
+end
+
+local cache = Cache:new(function () return Accumulator:new() end)
+
+local ds = createDataSource(params, cmd)
 
 local boundary_metrics = {
   accept_fail = 'VARNISH_CACHE_ACCEPT_FAIL',
@@ -53,16 +78,6 @@ local boundary_metrics = {
   s_sess = 'VARNISH_CACHE_S_SESS',
 }
 
-local ds = CommandOutputDataSource:new(cmd)
-
-local function parsemetric(source,line)
-  local t = tools.split(line,' ')
-  if (#t >= 2) then
-    currentValues[source][t[1]]=t[2];
-  end
-end
-
-local acc = Accumulator:new()
 local plugin = Plugin:new(params, ds)
 function plugin:onParseValues(data)
   local result = {}
@@ -72,7 +87,9 @@ function plugin:onParseValues(data)
     if metric then
       local bm = boundary_metrics[metric] 
       if bm then
-        result[bm] = acc:accumulate(bm, tonumber(value))
+        local acc = cache:get(data.info)
+        value = acc:accumulate(bm, tonumber(value))
+        result[bm] = { value = value, source = data.info }
       end
     end
   end
