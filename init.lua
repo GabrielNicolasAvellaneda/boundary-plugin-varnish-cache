@@ -7,7 +7,7 @@ local DataSourcePoller = framework.DataSourcePoller
 local Cache = framework.Cache
 local os = require('os')
 local table = require('table')
-local split = framework.string.split
+local gsplit = framework.string.gsplit
 local isEmpty = framework.string.isEmpty
 local clone = framework.table.clone
 
@@ -81,8 +81,7 @@ local boundary_metrics = {
 local plugin = Plugin:new(params, ds)
 function plugin:onParseValues(data)
   local result = {}
-  local lines = split(data.output, '\n') 
-  for _,  line in ipairs(lines) do
+  for line in gsplit(data.output, '\n') do
     local metric, value = string.match(line, '([^%s]+)%s+([%d+])')
     if metric then
       local bm = boundary_metrics[metric] 
