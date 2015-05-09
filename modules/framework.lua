@@ -454,9 +454,11 @@ function framework.string.isEmpty(str)
 end
 local isEmpty = framework.string.isEmpty
 
-function framework.string.notEmpty(str)
-  return not framework.string.isEmpty(str)
+--- If not empty returns the value. If is empty, an a default value was specified, it will return that value.
+function framework.string.notEmpty(str, default)
+  return not framework.string.isEmpty(str) and str or default
 end
+local notEmpty = framework.string.notEmpty
 
 function framework.string.concat(s1, s2, char)
   if isEmpty(s2) then
@@ -464,9 +466,6 @@ function framework.string.concat(s1, s2, char)
   end
   return s1 .. char .. s2
 end
-local concat = framework.string.concat
-
-local notEmpty = framework.string.notEmpty
 
 function framework.table.create(keys, values)
   local result = {}
@@ -520,6 +519,14 @@ end
 function framework.util.auth(username, password)
   return notEmpty(username) and notEmpty(password) and (username .. ':' .. password) or nil
 end
+
+-- Returns an string for a Boundary Meter event.
+-- @param type could be 'CRITICAL', 'ERROR', 'WARN', 'INFO' 
+function framework.util.eventString(type, message, tags)
+  tags = tags or ''
+  return string.format('_bevent: %s |t:%s|tags:%s', message, type, tags)
+end
+local eventString = framework.util.eventString
 
 -- You can call framework.string() to export all functions to the string table to the global table for easy access.
 local function exportable(t)
@@ -649,10 +656,10 @@ function NetDataSource:fetch(context, callback)
     if callback then
       socket:once('data', function (data)
         callback(data)
-        socket:shutdown()
+        socket:done()
       end)
     else
-      socket:shutdown()
+      socket:done()
     end
   end)
   socket:on('error', function (err) self:emit('error', 'Socket error: ' .. err.message) end)
@@ -718,7 +725,7 @@ function Plugin:initialize(params, dataSource)
     self.dataSource = dataSource
   end
 
-  self.source = params.source or os.hostname()
+  self.source = notEmpty(params.source, os.hostname())
   self.version = params.version or '1.0'
   self.name = params.name or 'Boundary Plugin'
   self.tags = params.tags or ''
@@ -736,8 +743,44 @@ function Plugin:printInfo(msg)
   self:printEvent('info', msg)
 end
 
-function Plugin:printEvent(event, msg)
-  print("_bevent:" .. self.name .. " ".. msg .. ": version " .. self.version ..  concat("|t:" .. event ..  "|tags:lua,plugin", self.tags, ','))
+function Plugin:printWarn(msg)
+  self:printEvent('warn', msg)
+end
+
+function Plugin:printCritical(msg)
+  self:printEvent('critical', msg)
+end
+
+-- TODO: Add a unit test 
+function framework.table.merge(t1, t2)
+  local output = clone(t1)
+  for k, v in pairs(t2) do
+    if type(k) == 'number' then 
+      table.insert(output, v) 
+    else
+      output[k] = v
+    end
+  end
+  return output
+end
+local merge = framework.table.merge
+
+function Plugin.formatMessage(name, version, msg)
+  return string.format('%s version %s: %s', name, version, msg)
+end
+
+function Plugin.formatTags(tags)
+  tags = tags or {}
+  if type(tags) == 'string' then
+    tags = split(tags, ',') 
+  end
+  return table.concat(merge({'lua', 'plugin'}, tags), ',')
+end
+
+function Plugin:printEvent(eventType, msg)
+  msg = Plugin.formatMessage(self.name, self.version, msg)
+  local tags = Plugin.formatTags(self.tags)
+  print(eventString(eventType, msg, tags))
 end
 
 function Plugin:_isPoller(poller)
@@ -972,11 +1015,11 @@ framework.Accumulator = Accumulator
 local PollerCollection = Emitter:extend()
 function PollerCollection:initialize(pollers)
   self.pollers = pollers or {}
-
 end
 
 function PollerCollection:add(poller)
   table.insert(self.pollers, poller)
+  poller:propagate('error', self)
 end
 
 function PollerCollection:run(callback)
@@ -988,7 +1031,6 @@ function PollerCollection:run(callback)
   for _,p in pairs(self.pollers) do
     p:run(callback)
   end
-
 end
 
 --- WebRequestDataSource Class

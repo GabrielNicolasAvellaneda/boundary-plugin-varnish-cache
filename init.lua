@@ -8,12 +8,13 @@ local Cache = framework.Cache
 local os = require('os')
 local table = require('table')
 local gsplit = framework.string.gsplit
-local isEmpty = framework.string.isEmpty
 local clone = framework.table.clone
+local isEmpty = framework.string.isEmpty
+local notEmpty = framework.string.notEmpty
 
 local params = framework.params
-params.pollInterval = params.pollInterval and tonumber(params.pollInterval)*1000 or 5000
-params.instance_name = params.instance_name or os.hostname() 
+params.pollInterval = notEmpty(tonumber(params.pollInterval), 5000)
+params.instance_name = notEmpty(params.instance_name, os.hostname()) 
 params.name = 'Boundary Plugin Varnish Cache'
 params.version = '1.2' 
 params.tags = 'varnish'
@@ -24,14 +25,14 @@ local cmd = {
 }
 
 local function createDataSource(params, cmd) 
-  if params.item and #params.items > 0 then
+  if params.items and #params.items > 0 then
     local pollers = PollerCollection:new() 
     for _, item in ipairs(params.items) do
-      cmd = clone(cmd)
-      cmd.info = item.instance_name
-      table.insert(cmd.args, '-n ' .. item.instance_name)
-      local poll_interval = tonumber(item.pollInterval or params.pollInterval) * 1000
-      local poller = DataSourcePoller:new(poll_interval, CommandOutputDataSource:new(cmd))
+      local item_cmd = clone(cmd)
+      item_cmd.info = notEmpty(item.instance_name, params.instance_name)
+      table.insert(item_cmd.args, string.format('-n%s', item_cmd.info))
+      local poll_interval = notEmpty(tonumber(item.pollInterval), params.pollInterval)
+      local poller = DataSourcePoller:new(poll_interval, CommandOutputDataSource:new(item_cmd))
       pollers:add(poller)
     end
     return pollers
@@ -82,7 +83,7 @@ local plugin = Plugin:new(params, ds)
 function plugin:onParseValues(data)
   local result = {}
   for line in gsplit(data.output, '\n') do
-    local metric, value = string.match(line, '([^%s]+)%s+([%d+])')
+    local metric, value = string.match(line, '([^%s]+)%s+(%d+)')
     if metric then
       local bm = boundary_metrics[metric] 
       if bm then
