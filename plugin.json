@@ -1,7 +1,7 @@
 {
     "description": "Monitors Varnish Cache",
     "command": "python -u plugin.py",
-    "command_lua" : "boundary-meter index.lua",
+    "command_lua" : "boundary-meter init.lua",
     "postExtract_lua" : "",
     "icon" : "icon.png",
     "metrics" : [

@@ -1,0 +1,11 @@
+{
+	"items": [
+			{
+			  "instance_name": "",
+		       	  "pollInterval": 3000
+			},
+			{ "instance_name": "vagrant-ubuntu-trusty-32.localdomain" }
+	],
+	"pollInterval" : 2000,
+	"instance_name" : ""
+}
