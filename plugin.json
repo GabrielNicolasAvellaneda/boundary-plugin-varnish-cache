@@ -49,6 +49,14 @@
             "type": "string",
             "default": "",
             "required": false
+        },
+        {
+           "title" : "Poll Interval",
+            "name" : "pollInterval",
+            "description" : "The Poll Interval in milliseconds. Ex. 1000",
+            "type" : "number",
+            "default" : 1000,
+            "required" : false
         }
     ]
 }

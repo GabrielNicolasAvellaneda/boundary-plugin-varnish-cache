@@ -9,7 +9,6 @@ local os = require('os')
 local table = require('table')
 local gsplit = framework.string.gsplit
 local clone = framework.table.clone
-local isEmpty = framework.string.isEmpty
 local notEmpty = framework.string.notEmpty
 
 local params = framework.params
