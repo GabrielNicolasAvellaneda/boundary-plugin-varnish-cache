@@ -24,7 +24,7 @@ The Boundary Varnish Cache plugin collects information on Varnish Cache.
 
 The plugin requires Python 2.6 or later.
 
-### Plugin setup
+### Plugin Setup
 
 The plugin requires the [varnishstat](https://www.varnish-cache.org/docs/4.0/reference/varnishstat.html#ref-varnishstat) command to be available and in the system path.
 
