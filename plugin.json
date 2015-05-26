@@ -36,7 +36,7 @@
         "VARNISH_CACHE_S_REQ",
         "VARNISH_CACHE_S_SESS"],
 
-    "dashboards" : [{"name" : "Varnish Cache Dummy",
+    "dashboards" : [{"name" : "Varnish Cache Summary",
         "layout" : 
 "d-w=4&d-h=4&d-pad=5&d-bg=none&d-g-VARNISH_CACHE_BACKEND_BUSY=0-0-1-1&d-g-VARNISH_CACHE_BACKEND_CONN=1-0-1-1&d-g-VARNISH_CACHE_BACKEND_FAIL=2-0-1-1&d-g-VARNISH_CACHE_BACKEND_RECYCLE=3-0-1-1&d-g-VARNISH_CACHE_BACKEND_REQ=0-1-1-1&d-g-VARNISH_CACHE_BACKEND_RETRY=1-1-1-1&d-g-VARNISH_CACHE_BACKEND_REUSE=2-1-1-1&d-g-VARNISH_CACHE_BACKEND_TOOLATE=3-1-1-1&d-g-VARNISH_CACHE_BACKEND_UNHEALTHY=0-2-1-1&d-g-VARNISH_CACHE_S_BODYBYTES=0-3-1-1&d-g-VARNISH_CACHE_CACHE_HIT=1-2-1-2-t&d-g-VARNISH_CACHE_CACHE_MISS=1-2-1-2-b&d-g-VARNISH_CACHE_CLIENT_CONN=2-2-1-1&d-g-VARNISH_CACHE_S_HDRBYTES=2-3-1-1&d-g-VARNISH_CACHE_S_REQ=3-2-1-1&d-g-VARNISH_CACHE_S_SESS=3-3-1-1" }],
 
@@ -49,6 +49,14 @@
             "type": "string",
             "default": "",
             "required": false
+        },
+        {
+           "title" : "Poll Interval",
+            "name" : "pollInterval",
+            "description" : "The Poll Interval in milliseconds. Ex. 1000",
+            "type" : "number",
+            "default" : 1000,
+            "required" : false
         }
     ]
 }
