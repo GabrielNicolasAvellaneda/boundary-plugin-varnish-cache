@@ -1,4 +1,7 @@
 {
+    "name" : "Boundary Varnish Cache Plugin",
+    "version" : "2.0",
+    "tags" : "varnish-cache",
     "description": "Monitors Varnish Cache",
     "command": "python -u plugin.py",
     "command_lua" : "boundary-meter init.lua",

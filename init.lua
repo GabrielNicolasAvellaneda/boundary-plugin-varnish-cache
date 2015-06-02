@@ -28,9 +28,6 @@ local notEmpty = framework.string.notEmpty
 local params = framework.params
 params.pollInterval = notEmpty(tonumber(params.pollInterval), 5000)
 params.instance_name = notEmpty(params.instance_name, os.hostname()) 
-params.name = 'Boundary Plugin Varnish Cache'
-params.version = '1.2' 
-params.tags = 'varnish'
 
 local cmd = {
   path = 'varnishstat',
