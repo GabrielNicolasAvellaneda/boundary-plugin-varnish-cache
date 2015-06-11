@@ -11,12 +11,12 @@ The Boundary Varnish Cache plugin collects information on Varnish Cache.
 |:----------|:-----:|:-------:|:-------:|:----:|
 | Supported |   v   |    v    |    v    |  v   |
 
-#### For Boundary Meter Versions v4.0 or greater
+#### For Boundary Meter versions v4.2 or greater
 
 - To install new meter go to Settings->Installation or [see instructons](https://help.boundary.com/hc/en-us/sections/200634331-Installation). 
 - To upgrade the meter to the latest version - [see instructons](https://help.boundary.com/hc/en-us/articles/201573102-Upgrading-the-Boundary-Meter). 
 
-#### For Boundary Meter less than V4.0
+#### For Boundary Meter less than v4.2
 
 |  Runtime | node.js | Python | Java |
 |:---------|:-------:|:------:|:----:|
@@ -34,7 +34,7 @@ The plugin will, by default, collect metrics from the Varnish instance named aft
 
 General operations for plugins are described in [this article](http://premium-support.boundary.com/customer/portal/articles/1635550-plugins---how-to).
 
-#### For Boundary Meter V4.0
+#### For Boundary Meter v4.2
 
 |Field Name     |Description                                                 |
 |:--------------|:-----------------------------------------------------------|
@@ -43,7 +43,7 @@ General operations for plugins are described in [this article](http://premium-su
 |Items          |Array of instances                                          |
 |Instance Name  |For every item in Items this sets the instance name         |
 
-#### For Boundary Meter less than V4.0
+#### For Boundary Meter less than v4.2
 
 |Field Name     |Description                                                 |
 |:--------------|:-----------------------------------------------------------|
