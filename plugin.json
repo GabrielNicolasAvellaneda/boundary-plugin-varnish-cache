@@ -1,8 +1,8 @@
 {
     "name" : "Boundary Varnish Cache Plugin",
-    "version" : "0.9.0",
+    "version" : "0.9.1",
     "meterVersionRequired" : "4.2.0-611",
-    "os" : [ "Linux", "Windows", "SmartOS", "OS X" ],
+    "unsupportedPlatforms" : [ ],
     "tags" : "varnish-cache",
     "description": "Monitors Varnish Cache",
     "command": "python -u plugin.py",
@@ -59,7 +59,7 @@
            "title" : "Poll Interval",
             "name" : "pollInterval",
             "description" : "The Poll Interval in milliseconds. Ex. 1000",
-            "type" : "number",
+            "type" : "integer",
             "default" : 1000,
             "required" : false
         }
