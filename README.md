@@ -1,5 +1,4 @@
-Boundary Varnish Cache Plugin
-=============================
+# Boundary Varnish Cache Plugin
 
 The Boundary Varnish Cache plugin collects information on Varnish Cache.
 
@@ -11,12 +10,12 @@ The Boundary Varnish Cache plugin collects information on Varnish Cache.
 |:----------|:-----:|:-------:|:-------:|:----:|
 | Supported |   v   |    v    |    v    |  v   |
 
-#### For Boundary Meter versions v4.2 or greater
+#### For Boundary Meter versions v4.2 or later 
 
-- To install new meter go to Settings->Installation or [see instructons](https://help.boundary.com/hc/en-us/sections/200634331-Installation). 
-- To upgrade the meter to the latest version - [see instructons](https://help.boundary.com/hc/en-us/articles/201573102-Upgrading-the-Boundary-Meter). 
+- To install new meter go to Settings->Installation or [see instructions](https://help.boundary.com/hc/en-us/sections/200634331-Installation). 
+- To upgrade the meter to the latest version - [see instructions](https://help.boundary.com/hc/en-us/articles/201573102-Upgrading-the-Boundary-Meter). 
 
-#### For Boundary Meter less than v4.2
+#### For Boundary Meter earlier than v4.2
 
 |  Runtime | node.js | Python | Java |
 |:---------|:-------:|:------:|:----:|
