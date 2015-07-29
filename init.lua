@@ -98,7 +98,7 @@ function plugin:onParseValues(data)
       local bm = boundary_metrics[metric] 
       if bm then
         local acc = cache:get(data.info)
-        value = acc:accumulate(bm, tonumber(value))
+        value = acc(bm, tonumber(value))
         result[bm] = { value = value, source = data.info }
       end
     end
